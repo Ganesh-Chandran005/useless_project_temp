@@ -3,7 +3,7 @@
 # Oru Manga Eru Aparatha 🥭 🎯
 
 ## Basic Details
-### Team Name: GR84
+### Team Name: Melo Mates
 
 ### Team Members
 - Team Lead: Ganesh Chandran - SJCET Palai
