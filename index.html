@@ -1,1 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oru Manga Eru Aparatha 🥭</title>
+<style>
+  body { 
+    margin: 0; 
+    overflow: hidden; 
+    background: #87CEEB; /* Sky Blue */
+    font-family: 'Segoe UI', sans-serif;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  
+  .header-box {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white; 
+    padding: 10px 25px; 
+    border-radius: 15px; 
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+    border: 3px solid #333;
+    z-index: 2;
+    text-align: center;
+  }
+  h1 { margin: 0; font-size: 24px; color: #333; }
+  p { margin: 5px 0 0 0; color: #666; font-weight: bold; }
 
+  /* --- TREE & MANGOES --- */
+  #tree-container {
+    position: absolute;
+    right: 5vw;
+    bottom: -5vh;
+    width: 500px;
+    height: 600px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  #tree { 
+    font-size: 500px; 
+    line-height: 600px;
+    margin: 0;
+    text-align: center;
+  }
+  .mango {
+    position: absolute;
+    font-size: 40px;
+    z-index: 2;
+    filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
+  }
+  #m1 { right: 120px; top: 150px; }
+  #m2 { right: 280px; top: 220px; }
+  #m3 { right: 80px; top: 300px; }
+  #m4 { right: 350px; top: 120px; }
+  #m5 { right: 200px; top: 350px; }
+
+  /* --- CSS SLINGSHOT --- */
+  #slingshot-wrapper {
+    position: absolute;
+    left: 10vw;
+    bottom: 10vh;
+    width: 100px;
+    height: 200px;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .wood { background: #5C4033; border-radius: 10px; position: absolute; }
+  .handle { width: 25px; height: 100px; bottom: 0; left: 37.5px; }
+  .prong-left { width: 20px; height: 100px; bottom: 85px; left: 15px; transform: rotate(-25deg); }
+  .prong-right { width: 20px; height: 100px; bottom: 85px; right: 15px; transform: rotate(25deg); }
+
+  /* Anchor points for the rubber band */
+  #anchor-left { position: absolute; left: 0px; top: 0px; width: 10px; height: 10px; }
+  #anchor-right { position: absolute; right: 0px; top: 0px; width: 10px; height: 10px; }
+
+  /* --- RUBBER BANDS --- */
+  #band-svg {
+    position: absolute; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    pointer-events: none; 
+    z-index: 4;
+  }
+  line { stroke: #d32f2f; stroke-width: 6; stroke-linecap: round; } 
+
+  /* --- THE STONE --- */
+  #stone-container {
+    position: absolute;
+    left: calc(10vw + 50px); 
+    bottom: calc(10vh + 160px); 
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+  }
+  
+  #stone { 
+    font-size: 50px;
+    cursor: grab; 
+    text-align: center;
+    line-height: 50px;
+    filter: drop-shadow(2px 5px 5px rgba(0,0,0,0.5));
+    position: absolute;
+    top: -25px; left: -25px; 
+  }
+  #stone:active { cursor: grabbing; }
+
+  /* --- JUMP SCARE ASSET (REAL IMAGE) --- */
+  #crack { 
+    display: none; 
+    position: absolute; 
+    top: 50%; left: 50%; 
+    transform: translate(-50%, -50%);
+    width: 100vw; height: 100vh; 
+    object-fit: cover; 
+    z-index: 10; 
+    pointer-events: none; 
+  }
+  
+  #reload-btn {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 15;
+      border-radius: 8px;
+      border: 2px solid black;
+      background: white;
+  }
+</style>
+</head>
+<body>
+  <div class="header-box">
+    <h1>Alamban Maanga Parikkal 🥭</h1>
+    <p>Kallu valichu videdaa!</p>
+  </div>
+  
+  <div id="tree-container">
+    <div id="tree">🌳</div>
+    <div class="mango" id="m1">🥭</div>
+    <div class="mango" id="m2">🥭</div>
+    <div class="mango" id="m3">🥭</div>
+    <div class="mango" id="m4">🥭</div>
+    <div class="mango" id="m5">🥭</div>
+  </div>
+
+  <div id="slingshot-wrapper">
+    <div class="wood handle"></div>
+    <div class="wood prong-left"><div id="anchor-left"></div></div>
+    <div class="wood prong-right"><div id="anchor-right"></div></div>
+  </div>
+
+  <svg id="band-svg">
+      <line id="band1" />
+      <line id="band2" />
+  </svg>
+
+  <div id="stone-container">
+    <div id="stone">🪨</div>
+  </div>
+  
+  <img id="crack" src="crack.png" alt="Broken Screen">
+  
+  <button id="reload-btn" onclick="location.reload()">Onoode Eriyeda 😏</button>
+
+  <!-- Dual Audio Assets -->
+  <audio id="shatterAudio" src="dragon-studio-glass-breaking-504033_[cut_1sec].mp3"></audio>
+  <audio id="dialogueAudio" src="ayyo-entammo-enne-patti-kadiche-made-with-Voicemod_[cut_3sec].mp3"></audio>
+
+  <script>
+    const stone = document.getElementById('stone');
+    const shatterAudio = document.getElementById('shatterAudio');
+    const customAudio = document.getElementById('dialogueAudio');
+    
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let dragX = 0, dragY = 0;
+    let hasFired = false;
+    let hideBands = false;
+
+    // --- REAL-TIME RUBBER BAND ANIMATION ---
+    function renderBands() {
+      if (hideBands) {
+        document.getElementById('band-svg').style.display = 'none';
+        return;
+      }
+      
+      const p1 = document.getElementById('anchor-left').getBoundingClientRect();
+      const p2 = document.getElementById('anchor-right').getBoundingClientRect();
+      const s = stone.getBoundingClientRect();
+      
+      const b1 = document.getElementById('band1');
+      const b2 = document.getElementById('band2');
+      
+      const stoneCenterX = s.left + s.width / 2;
+      const stoneCenterY = s.top + s.height / 2;
+
+      b1.setAttribute('x1', p1.left + 5);
+      b1.setAttribute('y1', p1.top + 5);
+      b1.setAttribute('x2', stoneCenterX);
+      b1.setAttribute('y2', stoneCenterY);
+      
+      b2.setAttribute('x1', p2.left + 5);
+      b2.setAttribute('y1', p2.top + 5);
+      b2.setAttribute('x2', stoneCenterX);
+      b2.setAttribute('y2', stoneCenterY);
+      
+      requestAnimationFrame(renderBands);
+    }
+    requestAnimationFrame(renderBands);
+
+    // --- DRAG PHYSICS ---
+    stone.addEventListener('mousedown', (e) => {
+      if (hasFired) return;
+      isDragging = true;
+      startX = e.clientX - dragX; 
+      startY = e.clientY - dragY;
+      stone.style.transition = "none"; 
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      dragX = e.clientX - startX;
+      dragY = e.clientY - startY;
+      
+      const maxPull = 150; 
+      const distance = Math.sqrt(dragX*dragX + dragY*dragY);
+      
+      if (distance > maxPull) {
+        dragX = (dragX / distance) * maxPull;
+        dragY = (dragY / distance) * maxPull;
+      }
+      
+      stone.style.transform = `translate(${dragX}px, ${dragY}px)`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!isDragging || hasFired) return;
+      isDragging = false;
+      
+      if (dragX > -20) {
+        stone.style.transition = "transform 0.2s ease-out";
+        stone.style.transform = `translate(0px, 0px)`;
+        dragX = 0; dragY = 0;
+        return;
+      }
+
+      hasFired = true;
+      hideBands = true; 
+      
+      stone.style.transition = "transform 1.2s cubic-bezier(0.2, 0.8, 0.3, 1)";
+      
+      const shootX = dragX * -12; 
+      const shootY = dragY * -10;  
+      
+      stone.style.transform = `translate(${shootX}px, ${shootY}px)`;
+
+      setTimeout(() => {
+        const rect = stone.getBoundingClientRect();
+        stone.style.transition = "none";
+        
+        setTimeout(() => {
+            stone.style.transition = "transform 0.08s ease-in"; 
+            stone.style.transform = `translate(30vw, 20vh) scale(60)`; 
+            
+            // --- THE JUMPSCARE IMPACT ---
+            setTimeout(() => {
+              document.getElementById('crack').style.display = "block"; 
+              document.body.style.background = "#ff3333";
+              
+              // 1. Play loud glass shatter instantly
+              shatterAudio.volume = 1.0;
+              shatterAudio.play().catch(e => console.log("Audio autoplay blocked by browser"));
+              
+              // 2. Wait 300ms, then play Aunty scream
+              setTimeout(() => {
+                  customAudio.volume = 1.0;
+                  customAudio.play().catch(e => {
+                    let speech = new SpeechSynthesisUtterance("ഇങ്ങനെ പേടിക്കല്ലെടാ ആണുങ്ങളെ വില കളയാനായിട്ട്");
+                    speech.lang = "ml-IN"; 
+                    window.speechSynthesis.speak(speech);
+                  });
+              }, 300);
+
+              setTimeout(() => {
+                  document.getElementById('reload-btn').style.display = "block";
+              }, 1200);
+
+            }, 80); 
+        }, 150); 
+      }, 800); 
+    });
+  </script>
+</body>
+</html>
